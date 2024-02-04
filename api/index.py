@@ -1,3 +1,5 @@
+#from dotenv import load_dotenv; load_dotenv() #DEV
+
 # mailgun
 import requests, os
 
@@ -117,7 +119,7 @@ ADMIN_KEY = os.getenv('ADMIN_KEY')
 
 
 limiter = Limiter(
-    app,
+    app=app,
     key_func=lambda: request.json['key'],
     default_limits=[]
 )

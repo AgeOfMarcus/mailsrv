@@ -161,7 +161,10 @@ def api_mail_send():
         subject = request.json['subject']
         html = request.json['html']
         res = send_email(f'{user["username"]}@mailsrv.marcusj.org', to, subject, html) # what
-        return jsonify({'ok': True}) # do more
+        if res.status_code == 200:
+            return jsonify(res.json())
+        else:
+            return jsonify({'ok': False, 'error': res.text})
     return jsonify({'ok': False, 'error': 'no key'})
 
 @app.route('/api/mail/verify/send', methods=['POST'])

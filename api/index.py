@@ -173,8 +173,11 @@ def api_mail_verify_send():
     if not (user := mdb.get_by_key(request.json.get('key'))):
         return jsonify({'ok': False, 'error': 'no key'})
     token = mdb.create_verification_token()
-    send_email(f'verify.{user["username"]}@mailsrv.marcusj.org', request.json['to'], 'Verify your email address', f'<a href="https://mailsrv.marcusj.org/mail/verify?token={token}">Click here to verify</a>')
-    return jsonify({'ok': True, 'token': token})
+    res = send_email(f'verify.{user["username"]}@mailsrv.marcusj.org', request.json['to'], 'Verify your email address', f'<a href="https://mailsrv.marcusj.org/mail/verify?token={token}">Click here to verify</a>')
+    if res.status_code == 200:
+        return jsonify({'ok': True, 'token': token, 'res': res.json()})
+    else:
+        return jsonify({'ok': False, 'error': res.text})
 
 @app.route('/api/mail/verify/check', methods=['POST'])
 def api_mail_verify_check():

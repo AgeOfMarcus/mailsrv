@@ -177,7 +177,7 @@ def api_mail_verify_send():
     if res.status_code == 200:
         return jsonify({'ok': True, 'token': token, 'res': res.json()})
     else:
-        return jsonify({'ok': False, 'error': res.text})
+        return jsonify({'ok': False, 'error': res.json()})
 
 @app.route('/api/mail/verify/check', methods=['POST'])
 def api_mail_verify_check():

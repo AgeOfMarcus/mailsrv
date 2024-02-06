@@ -1,16 +1,24 @@
 #from dotenv import load_dotenv; load_dotenv() #DEV
 
-# mailgun
-import requests, os
+# mailjet
+from mailjet_rest import Client
+import os
+
+mailjet = Client(auth=(os.getenv('MAILJET_KEY'), os.getenv('MAILJET_SECRET')))
 
 def send_email(from_, to, subject, html):
-    return requests.post(
-		"https://api.mailgun.net/v3/mailsrv.marcusj.org/messages",
-		auth=("api", os.getenv("MAILGUN")),
-		data={"from": from_,
-			"to": (to if type(to) == list else [to]),
-			"subject": subject,
-			"html": html})
+    return mailjet.send.create(data={
+        'Messages': [
+            {
+                'From': {
+                    'Email': from_,
+                },
+                'To': [{'Email': email} for email in to],
+                'Subject': subject,
+                'HTMLPart': html
+            }
+        ]
+    })
 
 from flask import Flask, jsonify, request, render_template
 from flask_limiter import Limiter

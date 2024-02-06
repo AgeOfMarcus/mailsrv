@@ -1,6 +1,6 @@
 Flask
 Flask-Limiter
 Flask-CORS
-requests
+mailjet_rest
 sqlalchemy
 pymysql

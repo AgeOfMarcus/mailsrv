@@ -4,7 +4,7 @@
 from mailjet_rest import Client
 import os
 
-mailjet = Client(auth=(os.getenv('MAILJET_KEY'), os.getenv('MAILJET_SECRET')))
+mailjet = Client(auth=(os.getenv('MAILJET_KEY'), os.getenv('MAILJET_SECRET')), version='v3.1')
 
 def send_email(from_, to, subject, html):
     return mailjet.send.create(data={
@@ -13,7 +13,7 @@ def send_email(from_, to, subject, html):
                 'From': {
                     'Email': from_,
                 },
-                'To': [{'Email': email} for email in to],
+                'To': [{'Email': email} for email in to] if type(to) == list else [{'Email': to}],
                 'Subject': subject,
                 'HTMLPart': html
             }

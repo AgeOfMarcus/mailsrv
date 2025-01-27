@@ -1,4 +1,4 @@
-#from dotenv import load_dotenv; load_dotenv() #DEV
+from dotenv import load_dotenv; load_dotenv() #DEV
 
 # mailjet
 from mailjet_rest import Client
@@ -104,7 +104,7 @@ class MailDB(object):
         res = db.run('SELECT verified FROM mail_verified WHERE token = :t', {
             't': token
         })
-        return bool(res[0]['verified']) if not res == [] else False
+        return bool(res[0]['verified']) if not res == [] else None
     
     def set_verification_token(self, token: str, verified: bool):
         db.run('UPDATE mail_verified SET verified = :v WHERE token = :t', {
@@ -148,11 +148,14 @@ def app_index():
 @app.route('/mail/verify')
 def app_mail_verify():
     if request.args.get('clicked'):
-        if mdb.check_verification_token(request.args.get('token')):
+        check = mdb.check_verification_token(request.args.get('token'))
+        if check == None:
+            return 'err: invalid token'
+        elif check == False:
             mdb.set_verification_token(request.args.get('token'), True)
             return render_template('close.html')
         else:
-            return 'err: invalid token'
+            return 'already verified'
     else:
         return render_template('click.html', token=request.args['token'])
     return '', 404
@@ -193,5 +196,5 @@ def api_mail_verify_check():
         return jsonify({'ok': False, 'error': 'no key'})
     verified = mdb.check_verification_token(request.json['token'])
     # ideally i'd like to delete the token after verified=true
-    # but by deleting here when verified, token was invalid on verif
+    # but id need to make sure the check is done before the delete
     return jsonify({'ok': True, 'verified': verified})

@@ -152,7 +152,7 @@ def app_mail_verify():
             mdb.set_verification_token(request.args.get('token'), True)
             return render_template('close.html')
         else:
-            return 'err: invalid token'
+            return f'err: invalid token: {request.args.get("token")}'
     else:
         return render_template('click.html', token=request.args['token'])
     return '', 404

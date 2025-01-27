@@ -1,4 +1,4 @@
-from dotenv import load_dotenv; load_dotenv() #DEV
+#from dotenv import load_dotenv; load_dotenv() #DEV
 
 # mailjet
 from mailjet_rest import Client

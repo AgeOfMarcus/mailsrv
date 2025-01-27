@@ -191,6 +191,7 @@ def api_mail_verify_send():
 def api_mail_verify_check():
     if not (user := mdb.get_by_key(request.json.get('key'))):
         return jsonify({'ok': False, 'error': 'no key'})
-    if (verified := mdb.check_verification_token(request.json['token'])):
-        mdb.delete_verification_token(request.json['token'])
+    verified = mdb.check_verification_token(request.json['token'])
+    # ideally i'd like to delete the token after verified=true
+    # but by deleting here when verified, token was invalid on verif
     return jsonify({'ok': True, 'verified': verified})

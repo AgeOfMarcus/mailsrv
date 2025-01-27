@@ -104,7 +104,7 @@ class MailDB(object):
         res = db.run('SELECT verified FROM mail_verified WHERE token = :t', {
             't': token
         })
-        return res[0] if not res == [] else False
+        return bool(res[0]['verified']) if not res == [] else False
     
     def set_verification_token(self, token: str, verified: bool):
         db.run('UPDATE mail_verified SET verified = :v WHERE token = :t', {
@@ -152,7 +152,7 @@ def app_mail_verify():
             mdb.set_verification_token(request.args.get('token'), True)
             return render_template('close.html')
         else:
-            return f'err: invalid token: {request.args.get("token")}'
+            return 'err: invalid token'
     else:
         return render_template('click.html', token=request.args['token'])
     return '', 404
